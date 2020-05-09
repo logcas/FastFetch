@@ -3,6 +3,8 @@ import { parseHeaders } from '../helpers/headers'
 import { createError } from '../helpers/error'
 import transform from './transform'
 import { Cancel } from '../cancel/cancel'
+import { isSameOrigin } from '../helpers/url'
+import cookieManager from '../helpers/cookie'
 
 export default function xhr(config: FastFetchConfig): FastFetchPromise {
   const {
@@ -14,7 +16,9 @@ export default function xhr(config: FastFetchConfig): FastFetchPromise {
     timeout,
     transformResponse,
     cancelToken,
-    withCredentials
+    withCredentials,
+    xsrfCookieName,
+    xsrfHeaderName
   } = config
   const request = new XMLHttpRequest()
 
@@ -40,6 +44,14 @@ export default function xhr(config: FastFetchConfig): FastFetchPromise {
 
     // set header after calling open
     setXHRHeaders(request, headers, data)
+
+    // xsrf
+    if (withCredentials || (isSameOrigin(url!) && xsrfCookieName)) {
+      const cookie = cookieManager.read(xsrfCookieName!)
+      if (cookie && xsrfHeaderName) {
+        request.setRequestHeader(xsrfHeaderName, cookie)
+      }
+    }
 
     request.onerror = () => {
       reject(createError('Network Error', true, config, undefined, request, 'ECONNERROR'))

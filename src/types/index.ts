@@ -28,6 +28,8 @@ export interface FastFetchConfig {
   transformResponse?: Transformer | Transformer[]
   cancelToken?: CancelToken
   withCredentials?: boolean
+  xsrfCookieName?: string
+  xsrfHeaderName?: string
 
   [propName: string]: any
 }

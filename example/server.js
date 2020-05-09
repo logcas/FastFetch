@@ -67,6 +67,10 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.resolve(__dirname)));
+app.use(express.static(path.resolve(__dirname), {
+  setHeaders: function(res) {
+    res.cookie('XSRF-TOKEN', '123456abcde')
+  }
+}));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

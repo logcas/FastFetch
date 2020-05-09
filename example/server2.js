@@ -9,6 +9,11 @@ app.use(cookieParser());
 app.use(cors({
   allowedOrigins: [
       'localhost:3000'
+  ],
+  headers: [
+    'X-XSRF-TOKEN',
+    'X-Requested-With',
+    'Content-Type'
   ]
 }));
 
