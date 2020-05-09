@@ -1,20 +1,20 @@
 export function isPlainObject(o: any): o is Object {
-  return Object.prototype.toString.call(o) === '[object Object]';
-};
+  return Object.prototype.toString.call(o) === '[object Object]'
+}
 
 export function isDate(o: any): o is Date {
-  return Object.prototype.toString.call(o) === '[object Date]';
-};
+  return Object.prototype.toString.call(o) === '[object Date]'
+}
 
 export function extend<T, U>(to: T, from: U): T & U {
-  for(const key in from) {
-    (to as T & U)[key] = from[key] as any;
+  for (const key in from) {
+    ;(to as T & U)[key] = from[key] as any
   }
-  return to as T & U;
-};
+  return to as T & U
+}
 
 export function deepMerge(...obj: any[]): any {
-  const result = Object.create(null);
+  const result = Object.create(null)
 
   obj.forEach(o => {
     if (o) {
@@ -23,15 +23,18 @@ export function deepMerge(...obj: any[]): any {
           if (result[name]) {
             result[name] = deepMerge(result[name], o[name])
           } else {
-            result[name] = deepMerge(o[name]);
+            result[name] = deepMerge(o[name])
           }
         } else {
-          result[name] = o[name];
+          result[name] = o[name]
         }
-      });
+      })
     }
-  });
+  })
 
-  return result;
+  return result
+}
 
+export function isFormData(val: any): val is FormData {
+  return typeof val !== 'undefined' && val instanceof FormData
 }

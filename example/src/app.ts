@@ -1,18 +1,74 @@
 import Fetch from '../../src';
+import 'nprogress/nprogress.css';
+import nprogress from 'nprogress';
 
 const instance = Fetch.create();
-document.cookie = 'a=b';
 
-instance.get('/get').then(res => {
-  console.log(res.data);
+setupProgress();
+
+function setupProgress() {
+  setupStartProgress();
+  setupUpdateProgress();
+  setupEndProgress();
+
+  function setupStartProgress() {
+    instance.interceptors.request.use(
+      config => {
+        nprogress.start();
+        return config;
+      },
+      error => {
+        nprogress.done();
+        return error;
+      }
+    );
+  }
+
+  function setupUpdateProgress() {
+    function update(e: ProgressEvent) {
+      nprogress.inc(e.loaded / e.total);
+    }
+
+    instance.defaults.onDownloadProgress = update;
+    instance.defaults.onUploadProgress = update;
+  }
+
+  function setupEndProgress() {
+    instance.interceptors.response.use(
+      response => {
+        nprogress.done();
+        return response;
+      },
+      error => {
+        nprogress.done();
+        return error;
+      }
+    );
+  }
+}
+
+const uploadBtn = document.getElementById('upload');
+uploadBtn!.addEventListener('click', e => {
+  const fileUploader = document.getElementById('uploader') as HTMLInputElement;
+  if (fileUploader && fileUploader!.files!.length) {
+    const file = fileUploader!.files![0];
+    const data = new FormData();
+    data.append('file', file);
+    instance.post('/upload', data);
+  }
 });
 
-instance.get('http://localhost:3038/hello', {
-  withCredentials: true
-}).then(res => {
-  console.log(3038);
-  console.log(res.data);
+const downloadBtn = document.getElementById('download');
+downloadBtn!.addEventListener('click', () => {
+  instance.get('/get', {
+    auth: {
+      username: 'admin',
+      password: '1234567'
+    }
+  });
 });
+
+
 
 // let cancel: any;
 // const cancelToken = new CancelToken(c => cancel = c);

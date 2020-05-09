@@ -30,6 +30,9 @@ export interface FastFetchConfig {
   withCredentials?: boolean
   xsrfCookieName?: string
   xsrfHeaderName?: string
+  onUploadProgress?: (e: ProgressEvent) => any
+  onDownloadProgress?: (e: ProgressEvent) => any
+  auth?: BasicAuthorization
 
   [propName: string]: any
 }
@@ -122,4 +125,9 @@ export interface CancelTokenStatic {
 
 export interface Cancel {
   reason?: string
+}
+
+export interface BasicAuthorization {
+  username: string
+  password: string
 }

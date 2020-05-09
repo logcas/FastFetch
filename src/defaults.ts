@@ -22,7 +22,9 @@ const defaults: FastFetchConfig = {
     }
   ],
   xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN'
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+  onDownloadProgress: () => {},
+  onUploadProgress: () => {}
 }
 
 const methodWithData = ['post', 'put', 'patch']

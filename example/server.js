@@ -9,6 +9,12 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const path = require('path');
 const router = express.Router();
 const cookieParser = require('cookie-parser');
+const multipart = require('connect-multiparty');
+const multipartMiddleware = multipart({
+  uploadDir: path.resolve(__dirname, 'files')
+});
+
+app.use(multipartMiddleware);
 
 app.use(cookieParser());
 
@@ -16,7 +22,18 @@ router.get('/interceptor', (req, res) => res.json({
   a: 'hello'
 }));
 
-router.get('/get', (req, res) => res.json(req.cookies));
+router.get('/get', (req, res) => {
+  const auth = req.headers.authorization;
+  const [type, credentials] = auth.split(' ');
+  const [username, password] = Buffer.from(credentials || '', 'base64').toString().split(':');
+  console.log(Buffer.from(credentials || '', 'base64').toString());
+  if (type === 'Basic' && username === 'admin' && password === '1234567') {
+    res.send('验证成功');
+  } else {
+    res.status(401);
+    res.send('Unauthorized!');
+  }
+});
 router.post('/post', (req, res) => res.json({
   a: 'dsadsa'
 }));
@@ -50,6 +67,10 @@ router.get('/timeout', (req, res) => {
     });
   }, 3000);
 })
+
+router.post('/upload', (req, res) => {
+  res.send('upload success');
+});
 
 app.use(
   webpackDevMiddleware(compiler, {
