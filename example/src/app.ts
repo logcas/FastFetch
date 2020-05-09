@@ -1,35 +1,47 @@
-import Fetch, { Transformer } from '../../src';
-import CancelToken from '../../src/cancel';
+import Fetch from '../../src';
 
 const instance = Fetch.create();
+document.cookie = 'a=b';
+
+instance.get('/get').then(res => {
+  console.log(res.data);
+});
+
+instance.get('http://localhost:3038/hello', {
+  withCredentials: true
+}).then(res => {
+  console.log(3038);
+  console.log(res.data);
+});
+
 // let cancel: any;
 // const cancelToken = new CancelToken(c => cancel = c);
-const source = CancelToken.source();
+// const source = CancelToken.source();
 
-setTimeout(() => {
-  source.cancel('User canel request');
-}, 2000);
+// setTimeout(() => {
+//   source.cancel('User canel request');
+// }, 2000);
 
-instance.get('/timeout', {
-  cancelToken: source.token
-}).then(res => {
-  console.log(res);
-}).catch(err => {
-  console.log(Fetch.isCancel);
-  if (Fetch.isCancel(err)) {
-    console.log('Request is cancelled by user');
-    console.log(err);
-  }
+// instance.get('/timeout', {
+//   cancelToken: source.token
+// }).then(res => {
+//   console.log(res);
+// }).catch(err => {
+//   console.log(Fetch.isCancel);
+//   if (Fetch.isCancel(err)) {
+//     console.log('Request is cancelled by user');
+//     console.log(err);
+//   }
 
-  instance.get('/timeout', {
-    cancelToken: source.token
-  }).then(res => {
-    console.log('requ2', res);
-  }).catch(err => {
-    console.log(err);
-    console.log('cancel token is used');
-  });
-});
+//   instance.get('/timeout', {
+//     cancelToken: source.token
+//   }).then(res => {
+//     console.log('requ2', res);
+//   }).catch(err => {
+//     console.log(err);
+//     console.log('cancel token is used');
+//   });
+// });
 
 // instance.interceptors.request.use(
 //   (config) => {

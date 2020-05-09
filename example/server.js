@@ -8,12 +8,15 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const path = require('path');
 const router = express.Router();
+const cookieParser = require('cookie-parser');
+
+app.use(cookieParser());
 
 router.get('/interceptor', (req, res) => res.json({
   a: 'hello'
 }));
 
-router.get('/get', (req, res) => res.send(req.query));
+router.get('/get', (req, res) => res.json(req.cookies));
 router.post('/post', (req, res) => res.json({
   a: 'dsadsa'
 }));
@@ -66,4 +69,4 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.resolve(__dirname)));
 
-app.listen(port, () => () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
