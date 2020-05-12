@@ -1,6 +1,6 @@
 import { FastFetchConfig, FastFetchPromise, FastFetchResponse, Transformer } from '../types'
 import xhr from './xhr'
-import { buildURL } from '../helpers/url'
+import { buildURL, isAbsolutePath, combineURL } from '../helpers/url'
 import { transformResponse } from '../helpers/data'
 import { flattenHeaders } from '../helpers/headers'
 import transform from './transform'
@@ -19,8 +19,16 @@ function processConfig(config: FastFetchConfig): void {
 }
 
 function transformURL(config: FastFetchConfig): string {
-  const { url, params = {} } = config
-  return buildURL(url!, params)
+  const { url, params, paramsSerializer, baseURL } = config
+  let _url
+  if (isAbsolutePath(url!)) {
+    _url = url
+  } else if (baseURL) {
+    _url = combineURL(baseURL, url!)
+  } else {
+    _url = url
+  }
+  return buildURL(_url!, params, paramsSerializer)
 }
 
 function transformResponseData(res: FastFetchResponse): FastFetchResponse {

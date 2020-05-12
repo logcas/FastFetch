@@ -1,6 +1,7 @@
 import Fetch from '../../src';
 import 'nprogress/nprogress.css';
 import nprogress from 'nprogress';
+import * as qs from 'qs';
 
 const instance = Fetch.create();
 
@@ -68,6 +69,28 @@ downloadBtn!.addEventListener('click', () => {
   });
 });
 
+Fetch.get('/hello', {
+  params: {
+    a: '1',
+    b: [1,2,3]
+  }
+});
+
+Fetch.get('/hello', {
+  baseURL: 'http://www.baodu.com/fsdf/sd/f/sd',
+  params: {
+    a: '1',
+    b: [1,2,3]
+  }
+});
+
+Fetch.get('hello', {
+  baseURL: 'http://www.baodu.com/fsdf/sd/f/sd///',
+  params: {
+    a: '1',
+    b: [1,2,3]
+  }
+});
 
 
 // let cancel: any;

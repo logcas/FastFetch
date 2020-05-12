@@ -1,11 +1,19 @@
-import { isPlainObject, isDate } from './util'
+import { isPlainObject, isDate, isURLSearchParams } from './util'
 
 interface URLParsingObject {
   protocol: string
   host: string
 }
 
-function encode(val: string): string {
+export function isAbsolutePath(url: string) {
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
+}
+
+export function combineURL(baseURL: string, relativeURL?: string) {
+  return relativeURL ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '') : baseURL
+}
+
+export function encode(val: string): string {
   return encodeURIComponent(val)
     .replace(/%40/g, '@')
     .replace(/%3A/gi, ':')
@@ -16,7 +24,7 @@ function encode(val: string): string {
     .replace(/%5D/gi, ']')
 }
 
-export function buildURL(url: string, params?: any): string {
+function defaultParamsSerializer(params: any): string {
   const parts: string[] = []
 
   Object.keys(params).forEach(key => {
@@ -41,7 +49,26 @@ export function buildURL(url: string, params?: any): string {
     })
   })
 
-  let serializedParams = parts.join('&')
+  return parts.join('&')
+}
+
+export function buildURL(
+  url: string,
+  params?: any,
+  paramsSerializer?: (params: any) => string
+): string {
+  if (!params) {
+    return url
+  }
+
+  let serializedParams
+  if (paramsSerializer) {
+    serializedParams = paramsSerializer(params)
+  } else if (isURLSearchParams(params)) {
+    serializedParams = params.toString()
+  } else {
+    serializedParams = defaultParamsSerializer(params)
+  }
 
   const markIndex = url.indexOf('#')
   if (markIndex !== -1) {
@@ -67,7 +94,6 @@ export function isSameOrigin(requestURL: string): boolean {
   const { protocol, host } = parseURL(requestURL)
   const isSame =
     protocol === currentLocationURLObject.protocol && host === currentLocationURLObject.host
-  console.log(isSame)
   return isSame
 }
 

@@ -33,6 +33,8 @@ export interface FastFetchConfig {
   onUploadProgress?: (e: ProgressEvent) => any
   onDownloadProgress?: (e: ProgressEvent) => any
   auth?: BasicAuthorization
+  paramsSerializer?: (params: any) => string
+  baseURL?: string
 
   [propName: string]: any
 }

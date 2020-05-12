@@ -43,7 +43,7 @@ router.options('/options', (req, res) => res.send(req.body));
 router.head('/head', (req, res) => res.send(req.body));
 router.patch('/patch', (req, res) => res.send(req.body));
 
-router.post('/hello', (req, res) => res.json(req.body));
+router.get('/hello', (req, res) => res.json({}));
 
 router.get('/user', (req, res) => res.json({
   code: 0,
