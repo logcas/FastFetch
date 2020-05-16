@@ -24,6 +24,7 @@ export default function xhr(config: FastFetchConfig): FastFetchPromise {
     onDownloadProgress,
     auth
   } = config
+  let { validateStatus } = config
   const request = new XMLHttpRequest()
 
   return new Promise((resolve, reject) => {
@@ -128,7 +129,9 @@ export default function xhr(config: FastFetchConfig): FastFetchPromise {
     }
 
     function handleResponse(res: FastFetchResponse) {
-      if ((res.status >= 200 && res.status < 300) || res.status === 304) {
+      const defaultValidateStatus = (status: number) => status >= 200 && status < 300
+      validateStatus = validateStatus || defaultValidateStatus
+      if (validateStatus(res.status)) {
         res.data = transform(res.data, res.headers, transformResponse!)
         resolve(res)
       } else {

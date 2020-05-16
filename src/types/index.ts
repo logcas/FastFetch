@@ -35,6 +35,7 @@ export interface FastFetchConfig {
   auth?: BasicAuthorization
   paramsSerializer?: (params: any) => string
   baseURL?: string
+  validateStatus?: (status: number) => boolean
 
   [propName: string]: any
 }
